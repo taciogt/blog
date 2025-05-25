@@ -9,7 +9,7 @@ all:
 
 ci/build:
 	@cd software-engineering && \
-	hugo --minify
+	hugo --gc --minify
 
 setup: .setup-timestamp
 
@@ -24,4 +24,8 @@ setup: .setup-timestamp
 clean:
 	@echo "Cleaning up..."
 	@rm -f .setup-timestamp
+
+run: setup
+	@cd software-engineering && \
+	hugo server -D
 
