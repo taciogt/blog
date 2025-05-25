@@ -33,7 +33,12 @@ jobs:
           extended: true
       - name: Build
         working-directory: software-engineering
-        run: hugo --minify
+        run: |
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "${{ steps.pages.outputs.base_url }}/" \
+            --cacheDir "${{ runner.temp }}/hugo_cache"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
