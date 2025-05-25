@@ -22,6 +22,10 @@ title = 'Makefile Ftw'
 
 ### CI Reusability
 
+### Customization
+
+Setting default variables with the possibility of overwrite them if there's an equal environment variable already set.
+
 ## Conclusions
 
 
