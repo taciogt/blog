@@ -1,7 +1,7 @@
 # Makefile for blog project
 
 ## Define phony targets (targets that don't represent files)
-.PHONY: all clean help
+.PHONY: all clean help new-post
 
 .DEFAULT_GOAL := help
 
@@ -32,3 +32,13 @@ clean:	## Remove generated files and reset environment
 run: setup	## Starts the Hugo development server
 	@cd software-engineering && \
 	hugo server -D
+
+new-post:	## Create a new blog post (usage: make new-post TITLE="Post Title")
+	@if [ -z "$(TITLE)" ]; then \
+		echo "Error: TITLE parameter is required. Usage: make new-post TITLE=\"Your Post Title\""; \
+		exit 1; \
+	fi
+	@echo "Creating new post with title: $(TITLE)"
+	@cd software-engineering && \
+	hugo new content/posts/$$(echo "$(TITLE)" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$$//').md
+	@echo "Post created successfully!"
