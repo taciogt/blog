@@ -36,7 +36,7 @@ jobs:
           hugo-version: 'latest'
           extended: true
       - name: Build
-        working-directory: software-engineering
+        working-directory: ./software-engineering
         run: |
           hugo \
             --gc \
