@@ -26,6 +26,10 @@ Gemfile.lock
 ### Generated files from build process
 .setup-timestamp
 
-
 ### IDE
 .idea/
+
+### Hugo generated files
+public/
+resources/
+.DS_Store
