@@ -1,14 +1,14 @@
 +++
 date = '2025-05-25T18:05:58-03:00'
 draft = false
-title = ''
+title = 'Software Engineering Home'
 +++
 
 ---
 
-## "Welcome to Software Engineering"
+## Welcome to Software Engineering
 
-"A personal blog about things I find interesting"
+A personal blog about stuff I learned and want to share.
 
 ---
 
