@@ -31,6 +31,7 @@ jobs:
         with:
           hugo-version: 'latest'
       - name: Build
+        working-directory: software-engineering
         run: hugo --minify
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
