@@ -33,10 +33,9 @@ jobs:
       - name: Build
         run: hugo --minify
       - name: Upload artifact
-        working-directory: software-engineering
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./public
+          path: ./software-engineering/public
 
   deploy:
     environment:

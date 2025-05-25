@@ -7,6 +7,10 @@
 all:
 	@echo "Building blog project..."
 
+ci/build:
+	@cd software-engineering && \
+	hugo --minify
+
 setup: .setup-timestamp
 
 .setup-timestamp: Makefile
