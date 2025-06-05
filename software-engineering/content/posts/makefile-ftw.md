@@ -50,11 +50,14 @@ And it is not unlikely that the best case scenario slowly evolves to a worst cas
 That's the first place I see the Makefile being able to help: whenever its possible, the steps to setup the environment can be easily put in a executable target:
 
 ```Makefile
-setup: ## Setups the local environment for development
+setup:
     brew install whatever
     go install something
     npm install -g another-thing
 ```
+
+When the setup can be easily executed with a `make setup` command, 
+it is easier to be updated because everyone is executing from the same source.  
 
 For the purpose of this examples, I'm assuming a similar OS across all contributors. 
 When it is not the case, some adaptations would be required. 
