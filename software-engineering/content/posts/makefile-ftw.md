@@ -44,9 +44,9 @@ I'll cover some of its features and how they can be used in some different scena
 ### Development Environment Setup
 
 As developers, 
-every once in a while we clone a new project and goes to the dreadful process of reading a README file and hoping for the setup process to be as painless as it promises. 
+every once in a while we clone a new project and go through the dreadful process of reading a README file and hoping for the setup process to be as painless as it promises. 
 Best case scenario, it is a painless and boring time that every contributor of this project have been through. 
-And it is not unlikely that the best case scenario slowly evolves to a worst case situation, as the project changes and this README quietly becomes outdated. 
+Unfortunately, it is not unlikely that the best case scenario evolves to a worst case situation: the project changes and this README quietly becomes outdated. 
 That's the first place I see the Makefile being able to help: whenever its possible, the steps to setup the environment can be easily put in a executable target:
 
 ```Makefile
@@ -54,19 +54,73 @@ setup:
     brew install whatever
     go install something
     npm install -g another-thing
+  
+# For the purpose of this examples, I'm assuming a similar OS across all contributors. 
+# When it is not the case, some adaptations would be required.
 ```
 
 When the setup can be easily executed with a `make setup` command, 
-it is easier to be updated because everyone is executing from the same source.  
+it is easier to be updated because everyone is executing from the same source. 
+As the project setup changes, it is much easier to tell everyone just to rerun `make setup` than to give a list of detail steps to take and to make the README longer each time.       
 
-For the purpose of this examples, I'm assuming a similar OS across all contributors. 
-When it is not the case, some adaptations would be required. 
+Even better, you can get by with not having to tell anyone about that. 
+That's where caching strategies come in hand to make the setup updates transparent for whoever is contributing to it.  
+
+### Seamless Updates and Caching Strategies 
+
+To talk about caching strategies, 
+I want to talk about my impressions working with Go and Typescript projects regarding its dependency management systems.
+
+When switching projects, I noticed that Go handles this with a seamless elegance that feels cumbersome in the standard Node solutions. 
+I rarely need to manually download the dependencies when someone adds or upgrades a package in a Go project.
+Go just knows when something have changed and downloads it on the fly. 
+I only have to know about that if I'm the one reviewing the PR. 
+
+But when I switch back to a Typescript repository, 
+I'll just run a `git pull` and try to run the project. 
+If I'm lucky, I'll immediately get some error due to a missing package when starting the application. 
+If I'm not so lucky, I'll get a runtime error and wonder for a while until I remember the `npm install` I have forgotten. Every single time.
+
+Should I learn something from it?
+Yes.
+Did I?
+No. 
+But I found a solution, for this problem and a few more. 
+To implement this solution, first I put my standard commands in a set of Makefile targets. 
+I'll simulate a generic Node based application for this example, but it can be done with any type of project. 
+
+```Makefile
+setup:
+    npm install
+    
+start:
+    npm start
+```
+
+To make my life easier, I want to customize these targets so they work like this:
+* When I execute `make start`, it should run the setup instructions automatically  
+* When I execute `make setup`, it should only do something if:
+  * It's the first time I'm calling it;
+  * Something have changed with `package.json` or `package.lock.json`;
+  * Something have changed with the `Makefile` itself.
+
+To achieve that, the Makefile becomes something like this:
+
+```Makefile
+.setup.timestamp: Makefile package.json package.lock.json
+    npm install
+    @touch .setup.timestamp 
+
+setup: .setup.timestamp
+
+start: setup
+    npm start
+```
+
+Now it doesn't matter if it the first time cloning the project or if you're pulling some changes that with some minor dependency upgrades,
+running `make start` is always enough and no one needs to run `npm install` anymore.  
 
 ### Brief Documentation
-
-### Built in caching strategies 
-
-### Seamless Updates
 
 ### Language Agnostic
 
