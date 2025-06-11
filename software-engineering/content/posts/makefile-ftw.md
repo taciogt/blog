@@ -39,6 +39,7 @@ Jump five decades into the future and the Makefiles are known as general purpose
 I'll cover some of its features and how they can be used in some different scenarios
 
 
+
 ## Useful resources
 
 ### Development Environment Setup
@@ -64,7 +65,37 @@ it is easier to be updated because everyone is executing from the same source.
 As the project setup changes, it is much easier to tell everyone just to rerun `make setup` than to give a list of detail steps to take and to make the README longer each time.       
 
 Even better, you can get by with not having to tell anyone about that. 
-That's where caching strategies come in hand to make the setup updates transparent for whoever is contributing to it.  
+That's where seamless actions and caching strategies come in hand to make the setup updates transparent for whoever is contributing to it.
+But since I mentioned the README a lot, it is worth mentioning how the Makefile can be an extension of it.
+
+### Brief Documentation
+
+We've all had the feeling that a project can only be as good as its documentation, 
+be it an application, a full featured framework, or even a small library.
+The same principle can be extended to the Makefile, and the good news is that it isn't hard to apply it.
+With a simple help target the Makefile can be self-documented. It eliminates the need to leave the terminal and open the Makefile or the README for remembering how to run the integration tests.  
+
+The implementation of this isn't hard, but relies on some not so frequently used tools. 
+In the past I would search for some Stackoverflow answer to help with that, but now a simple prompt for an AI Agent can handle creating something like it:
+
+```makefile
+.DEFAULT_GOAL := help
+
+help:	## Show this help
+	@grep -E '^[a-zA-Z_/-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+```
+
+Then all you need to do is adding this `## ...` comments after any target to get a help message like that:
+
+```
+❯ make
+build                Build the blog project
+build/ci             Builds the application using the same parameters as the production environment
+help                 Show this help
+run                  Starts the local development server
+setup                Setups the local environment for development
+```
+
 
 ### Seamless Updates and Caching Strategies 
 
@@ -118,9 +149,7 @@ start: setup
 ```
 
 Now it doesn't matter if it the first time cloning the project or if you're pulling some changes that with some minor dependency upgrades,
-running `make start` is always enough and no one needs to run `npm install` anymore.  
-
-### Brief Documentation
+running `make start` is always enough and no one needs to run `npm install` anymore.
 
 ### Language Agnostic
 
