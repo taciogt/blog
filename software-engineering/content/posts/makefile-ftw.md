@@ -149,9 +149,23 @@ start: setup
 ```
 
 Now it doesn't matter if it the first time cloning the project or if you're pulling some changes that with some minor dependency upgrades,
-running `make start` is always enough and no one needs to run `npm install` anymore.
+running `make start` is always enough and no one needs to run `npm install` anymore. 
+One nice side-effect of this "seamlessness strategy" is making the CI pipeline simpler and easier to maintain.
+By declaring the target inter-dependencies, there's no need to manually run the setup steps in the CI pipeline. 
+A simples `make test` should be enough.  
 
 ### Language Agnostic
+
+As a generic tool, 
+the Makefile is a tool useful for standardizing the local environment even in the most heterogeneous environments. 
+By implementing a similar set of targets, and using the self-documenting strategy for the one that aren't so similar, 
+one can switch contexts between projects with a few less things to worry about.
+
+Personally, I found this characteristic useful even for navigating between projects on the same language, 
+but with different dependency management solutions (thanks, Node). 
+I kept forgetting which one used npm, pnpm or yarn, 
+so I created a Makefile for all of them with the same set of `make start`, `make install` and `make test` targets.
+The same idea can also be extended for projects with same language, but different frameworks.
 
 ### CI Reusability
 
