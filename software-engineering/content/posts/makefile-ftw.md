@@ -10,17 +10,17 @@ title = 'Makefile Ftw'
 
 Early in my career I met a wise engineer (thanks Tony!) that cared about providing not only a decent README for the project we've worked, 
 but also a pretty good CLI to help with everyday tasks. 
-It was way before DevEx became a buzzword. We were a small start up with scarce resources, 
-not much time to spare with complex onboardings and how to standardize the development process. 
+It was way before we talked about Developer Experience around the water cooler. We were a small start up with scarce resources, 
+not much time to spare with complex onboardings and internal tools.
 
-For a young engineer that struggled with almost everything, 
+For a young developer that struggled with almost everything, 
 it was enough to imprint in my engineering-related values the importance of making my life easier.
 Easier by not having to think all the time about every detail about the job, easier by not having to explain for newcomers stuff that I didn't remember anymore. 
 It didn't hurt that the life of my peers became easier as a byproduct and it added a compound effect to the results.
 
 After a few years I joined another company that chose a Makefile to scratch the same itch. 
-Since then, I learn a new Makefile feature or trick once in a while and haven't started a project without it anymore.
-These are the Whys and Hows to use this tool. 
+Since then, I have learned a few Makefile tricks and now I won't start a project without it anymore.
+These are the Whys and Hows to use this tool for helping with that, regardless of the stack you're dealing with.
 
 ## What
 
@@ -38,7 +38,9 @@ Its roots go all the way to the early days of Unix, and it became the standard s
 Jump five decades into the future and the Makefiles are known as general purposes tools that can be used from development environment setup to deployment scripts.
 I'll cover some of its features and how they can be used in some different scenarios
 
+### A Very Brief Anatomy
 
+TODO: describe the main components of Makefile
 
 ## Useful resources
 
@@ -157,21 +159,66 @@ A simples `make test` should be enough.
 ### Language Agnostic
 
 As a generic tool, 
-the Makefile is a tool useful for standardizing the local environment even in the most heterogeneous environments. 
-By implementing a similar set of targets, and using the self-documenting strategy for the one that aren't so similar, 
-one can switch contexts between projects with a few less things to worry about.
+the Makefile is useful for standardizing the local environment even in the most heterogeneous environments. 
+By implementing a similar set of targets, and using the self-documenting strategy for the ones that aren't so similar, 
+one can switch contexts between projects with less things to worry about.
 
 Personally, I found this characteristic useful even for navigating between projects on the same language, 
 but with different dependency management solutions (thanks, Node). 
-I kept forgetting which one used npm, pnpm or yarn, 
+I keep forgetting which one uses npm, pnpm or yarn, 
 so I created a Makefile for all of them with the same set of `make start`, `make install` and `make test` targets.
 The same idea can also be extended for projects with same language, but different frameworks.
 
 ### CI Reusability
 
+Having this kind of CLI tool has applications that go beyond helping forgetful developers with the local environment.
+The tasks that must be run on the CI pipeline as well, can be easily put there with a simple `make <stuff>` call. 
+No need to copy the entire set of commands and try to remember the exact set of parameters when building the application.
+
+In my personal experience, the other way around isn't so rare as well: I implement in the Makefile something that I want to run in the CI pipeline. 
+With the Makefile it is easy to test the command locally until it is ready to be tested in the usually slower remote environment.
+It helps me troubleshooting a good amount of problems faster, 
+leaving to work on the CI steps just to fix some authentication or other environment setup issues.
+
 ### Customization
 
-Setting default variables with the possibility of overwrite them if there's an equal environment variable already set.
+After talking about reusing some Makefile targets both for local and remote environment,
+you might be wondering how one could deal with some differences between them.
+If these differences are quite relevant, 
+one quick solution is creating multiple targets and managing the reusable code as a shared dependency:
+```makefile
+`setup/common:
+    npm install
+    
+setup/local: setup/common
+    # run some local authentication
+
+setup/ci: setup/common
+    # no-op: authentication is handled by a different action
+
+build/common: setup/common
+    npm build
+
+build/local: setup/local build/common
+    # no-op: the common build steps are enough 
+    
+build/ci: setup/ci build/common
+    # some extra steps for packaging the build `
+```
+
+On the other hand, 
+if these differences seem more like alternative parameters for the same set of commands the conditional variable assignment can be very helpful.
+This works like an parameter with a default value that you can override in the places you have more control, 
+like the CI pipeline. 
+One way to do that is set the default value as the one to use for local development, 
+and just set an environment variable when you need a different one.
+
+```makefile
+ENV ?= local
+
+build: 
+    npm build --env=$(ENV) 
+```
 
 ### Flexibility
 
