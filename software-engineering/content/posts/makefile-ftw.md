@@ -186,6 +186,7 @@ After talking about reusing some Makefile targets both for local and remote envi
 you might be wondering how one could deal with some differences between them.
 If these differences are quite relevant, 
 one quick solution is creating multiple targets and managing the reusable code as a shared dependency:
+
 ```makefile
 `setup/common:
     npm install
@@ -220,11 +221,49 @@ build:
     npm build --env=$(ENV) 
 ```
 
+### Composition
+
+After all these characteristics and different use cases for Makefile rules, 
+it is worth noticing how they can be composed to create some new tools with virtually zero effort.
+Seems like a something I have taken for granted, but looking back I couldn't do that so easily with other tools.
+
+One example on how to do that is for creating a rule to check if my local environment was properly set.
+When I was seting up a new project, I created a some Make rules for installing dependencies, 
+running the local server, building the bundle, running the testes, checking the linter, the whole deal.
+Instead of remembering to run each step to know that everything is good, 
+I created a command that runs some of them and set it as default.
+
+```makefile
+.DEFAULT_GOAL := all
+
+install:
+    # install dependencies
+    
+build: install
+    # build the application bundle
+    
+test: install
+    # run the tests
+    
+lint: install
+    # run the linter
+ 
+all: build lint test  
+```
+
 ### Flexibility
 
 Use the name of the target to do something
 
 ## Conclusions
+
+
+
+
+
+
+
+------ 
 
 
 Here are additional compelling reasons to include in your blog post about Makefiles:
